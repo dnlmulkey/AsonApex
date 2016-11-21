@@ -1,0 +1,48 @@
+<project name="MAN Migration Support" basedir="." xmlns:sf="antlib:com.salesforce">
+
+	<!-- Salesforce Ant Migration Toolkit Setup -->
+	<taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce" classpath="lib/ant-salesforce.jar" />
+	
+	<!-- PMD Static Code Analysis Setup -->
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+		<classpath>
+			<pathelement location="lib/pmd-core-5.6.0-SNAPSHOT.jar" />
+			<pathelement location="lib/pmd-apex-5.6.0-SNAPSHOT.jar" />
+			<pathelement location="lib/pmd-apex-5.6.0-SNAPSHOT-apex-jorje-shaded.jar" />
+			<pathelement location="lib/commons-lang3-3.4.jar" />
+			<pathelement location="lib/commons-io-2.4.jar" />
+			<pathelement location="lib/antlr-runtime-3.5.2.jar" />
+			<pathelement location="lib/jaxen-1.1.6.jar" />
+		</classpath>
+	</taskdef>
+	
+	<property name="sfdc.maxpoll" value="200" />
+	<!-- property name="sfdc.deploy.testLevel" value="NoTestRun" / -->
+	<!-- property name="sfdc.deploy.testLevel" value="RunSpecifiedTests" / -->
+	<!-- property name="sfdc.deploy.testLevel" value="RunLocalTests" / -->
+	<!-- property name="sfdc.deploy.testLevel" value="RunAllTestsInOrg" / -->
+	
+	<target name="deploy">
+		<property name="sfdc.serverurl" value="https://login.salesforce.com" />
+		<property name="sfdc.deploy.srcDir" value="src" />
+		
+		<sf:deploy username="${sfdc.username}" password="${sfdc.password}${sfdc.securitytoken}"
+			serverurl="${sfdc.serverurl}"
+			maxPoll="${sfdc.maxpoll}"
+			deployRoot="${sfdc.deploy.srcDir}"
+			checkOnly="${sfdc.deploy.checkOnly}"
+			rollbackOnError="true">
+		</sf:deploy>
+	</target>
+	
+	<target name="analyze">
+		<pmd shortFileNames="true">
+			<fileset dir="src/classes">
+				<include name="**/*.cls" />
+			</fileset>
+			<formatter type="xml" toFile="pmd-analysis.xml" />
+			<formatter type="text" toConsole="true" />
+			<ruleset>rulesets/apex/ruleset.xml</ruleset>
+		</pmd>
+	</target>
+</project>

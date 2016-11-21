@@ -1,0 +1,11 @@
+<aura:component >
+    
+    <header class="slds-page-header" role="banner">
+        <c:campingHeader />
+    </header>
+    
+    <section>
+        <c:campingList />
+    </section>
+	
+</aura:component>
