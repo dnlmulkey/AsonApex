@@ -1,24 +1,34 @@
 pipeline {
   agent any
+  
+  environment {
+    SFDC_ACCESS = credentials('sfdc-deploy-testqs')
+  }
+  
+  tools {
+    ant 'Ant-1.10.1'
+  }
+  
   stages {
+    stage('Validate') {
+      steps {
+        echo 'Validating..'
+        sh 'ant -version'
+      }
+    }
     stage('Analyze') {
-      parallel {
-        stage('Analyze') {
-          steps {
-            sh 'ant analyze'
-            pmd(pattern: '**/pmd-analysis.xml')
-          }
-        }
-        stage('Validate') {
-          steps {
-            sh 'ant deploy'
-          }
-        }
+      steps {
+        echo 'Analyzing..'
       }
     }
     stage('Deploy') {
       steps {
-        sh 'ant deploy'
+        echo 'Deploying..'
+      }
+    }
+    stage('Test') {
+      steps {
+        echo 'Testing..'
       }
     }
   }
